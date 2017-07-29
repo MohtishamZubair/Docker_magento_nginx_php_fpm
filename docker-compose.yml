@@ -1,0 +1,51 @@
+version: "2.1"
+
+services:
+ app:
+  image: mageinferno/magento2-nginx
+  links:
+   - php-fpm
+  volumes_from:
+   - appdata
+  working_dir: /src
+  environment:
+   - VIRTUAL_HOST=m4.mohtshm.com
+  networks:
+   - php_net
+   - data_net
+   - default
+
+ php-fpm:
+  image: mageinferno/magento2-php
+  volumes_from:
+   - appdata
+  networks:
+   - php_net
+   - data_net
+
+ appdata:
+  image: datavolcentos
+  command: tail -f /dev/null
+  volumes:
+   - /var/development/src/:/src/pub/
+  networks:
+   - data_net
+
+networks:
+ php_net:
+  driver: bridge
+  ipam:
+   driver: default
+   config:
+   -
+     subnet: 10.10.3.0/24
+ data_net:
+  driver: bridge
+  ipam:
+   driver: default
+   config:
+   -
+     subnet: 10.10.5.0/24
+ default:
+  external:
+   name: dockercompose_local-app-net
