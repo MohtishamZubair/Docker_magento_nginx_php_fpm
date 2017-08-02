@@ -1,5 +1,5 @@
 # Docker_magento_nginx_php_fpm
-for magento2 with Docker &amp; docker compose. This is soley for exploration of docker ecosystem aiming towards deployment of magento2 on nginx with php-fpm 7
+for magento2 with Docker &amp; docker compose. This is soley for exploration of docker ecosystem aiming towards deployment of magento2 on nginx with php-fpm 7. Maintainer is not resposible for any undesired situations.
 
 
 First install docker & docker-compose
