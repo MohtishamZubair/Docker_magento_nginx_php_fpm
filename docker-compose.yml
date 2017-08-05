@@ -1,3 +1,7 @@
+# from Markoshust 
+# Mage Inferno Docker Compose (https://github.com/mageinferno/magento2-docker-compose)
+# Version 7.0.0
+
 MAINTAINER Mohtisham Zubair <mohtishamzubair@hotmail.com>
 
 version: "3"
