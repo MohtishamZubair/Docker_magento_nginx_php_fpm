@@ -2,48 +2,52 @@
 # Mage Inferno Docker Compose (https://github.com/mageinferno/magento2-docker-compose)
 # Version 7.0.0
 
-MAINTAINER Mohtisham Zubair <mohtishamzubair@hotmail.com>
-
 version: "3"
 
 services:
- app:
-  image: mageinferno/magento2-nginx
-  links:
-   - php-fpm
-  working_dir: /src/
-  environment:
-   - VIRTUAL_HOST=m4.mohtshm.com
-  volumes:
-   - data_share:/src/pub/
-  networks:
-   - php_net
-   - default
+  app:
+    image: mageinferno/magento2-nginx:1.11-1
+    links:
+      - m5db
+      - m5phpfpm
+    volumes: &appvolumes
+      - appdata:/var/www/html
+    environment:
+      - VIRTUAL_HOST=m5.mohtshm.com
+      - PHP_HOST=m5phpfpm
+      - PHP_PORT=9000
 
- php-fpm:
-  image: mageinferno/magento2-php
-  volumes:
-   - data_share:/src/pub/
-  networks:
-   - php_net
+  m5phpfpm:
+    image: mageinferno/magento2-php:7.0-fpm-1
+    links:
+      - m5db
+    volumes: *appvolumes
+    environment:
+      - PHP_MEMORY_LIMIT=512M
+      - PHP_HOST=m5phpfpm
+      - PHP_PORT=9000
 
+  m5db:
+    image: percona:5.7
+    volumes:
+      - dbdata:/var/lib/mysql
+    ports:
+      - 8001:3306
+    env_file: env/mysql.env
+
+  setup:
+    image: mageinferno/magento2-php:7.0-fpm-1
+    command: /usr/local/bin/mage-setup
+    links:
+      - m5db
+    volumes: *appvolumes
+    env_file: env/setup.env
 
 volumes:
- data_share:
-  driver: local
-  driver_opts:
-   type: volume
-   device: /var/development/src/
-   o: bind
+  dbdata:
+  appdata:
 
 networks:
- php_net:
-  driver: bridge
-  ipam:
-   driver: default
-   config:
-   -
-     subnet: 10.10.3.0/24
  default:
   external:
-   name: dockercompose_local-app-net
+   name: magento2dockercomposemaster_www
